@@ -40,10 +40,10 @@ var app = express();
 app.set('port', process.env.PORT || 3000);
 
 // body-parser를 이용해 application/x-www-form-urlencoded 파싱
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // body-parser를 이용해 application/json 파싱
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 
 // public 폴더와 uploads 폴더 오픈
 app.use('/public', static(path.join(__dirname, 'public')));
@@ -67,26 +67,25 @@ app.use(cors());
 //multer 미들웨어 사용 : 미들웨어 사용 순서 중요  body-parser -> multer -> router
 // 파일 제한 : 10개, 1G
 var storage = multer.diskStorage({
-    destination: function (req, file, callback) {
-        callback(null, 'uploads')
-    },
-    filename: function (req, file, callback) {
-        //callback(null, file.originalname + Date.now())
-		//callback(null, file.originalname)
-		var extension = path.extname(file.originalname);
-		var basename = path.basename(file.originalname, extension);
-		callback(null, basename + Date.now() + extension);
-	 }
+  destination: function (req, file, callback) {
+      callback(null, 'uploads')
+  },
+  filename: function (req, file, callback) {
+    //callback(null, file.originalname + Date.now())
+    //callback(null, file.originalname)
+    var extension = path.extname(file.originalname);
+    var basename = path.basename(file.originalname, extension);
+    callback(null, basename + Date.now() + extension);
+  }
 });
 
 var upload = multer({ 
-    storage: storage,
-    limits: {
-		files: 10,
-		fileSize: 1024 * 1024 * 1024
+  storage: storage,
+  limits: {
+    files: 10,
+    fileSize: 1024 * 1024 * 1024
 	}
 });
-
 
 // 라우터 사용하여 라우팅 함수 등록
 var router = express.Router();
@@ -98,9 +97,9 @@ router.route('/process/photo').post(upload.array('photo1', 1), function(req, res
 	try {
 		var files = req.files;
 	
-        console.dir('#===== 업로드된 첫번째 파일 정보 =====#')
-        console.dir(req.files[0]);
-        console.dir('#=====#')
+    console.dir('#===== 업로드된 첫번째 파일 정보 =====#')
+    console.dir(req.files[0]);
+    console.dir('#=====#');
         
 		// 현재의 파일 정보를 저장할 변수 선언
 		var originalname = '',
@@ -109,23 +108,22 @@ router.route('/process/photo').post(upload.array('photo1', 1), function(req, res
 			size = 0;
 		
 		if (Array.isArray(files)) {   // 배열에 들어가 있는 경우 (설정에서 1개의 파일도 배열에 넣게 했음)
-	        console.log("배열에 들어있는 파일 갯수 : %d", files.length);
-	        
-	        for (var index = 0; index < files.length; index++) {
-	        	originalname = files[index].originalname;
-	        	filename = files[index].filename;
-	        	mimetype = files[index].mimetype;
-	        	size = files[index].size;
-	        }
-	        
-	    } else {   // 배열에 들어가 있지 않은 경우 (현재 설정에서는 해당 없음)
-	        console.log("파일 갯수 : 1 ");
-	        
-	    	originalname = files[index].originalname;
-	    	filename = files[index].name;
-	    	mimetype = files[index].mimetype;
-	    	size = files[index].size;
-	    }
+      console.log("배열에 들어있는 파일 갯수 : %d", files.length);
+      
+      for (var index = 0; index < files.length; index++) {
+        originalname = files[index].originalname;
+        filename = files[index].filename;
+        mimetype = files[index].mimetype;
+        size = files[index].size;
+      }   
+    } else {   // 배열에 들어가 있지 않은 경우 (현재 설정에서는 해당 없음)
+      console.log("파일 갯수 : 1 ");
+        
+      originalname = files[index].originalname;
+      filename = files[index].name;
+      mimetype = files[index].mimetype;
+      size = files[index].size;
+    }
 		
 		console.log('현재 파일 정보 : ' + originalname + ', ' + filename + ', '
 				+ mimetype + ', ' + size);
@@ -150,9 +148,9 @@ app.use('/', router);
 
 // 404 에러 페이지 처리
 var errorHandler = expressErrorHandler({
-    static: {
-      '404': './public/404.html'
-    }
+  static: {
+    '404': './public/404.html'
+  }
 });
 
 app.use( expressErrorHandler.httpError(404) );
